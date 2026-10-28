@@ -127,6 +127,32 @@
     .wave { display: flex; align-items: center; gap: 3px; height: 22px; }
     .wave i { display: block; width: 3px; border-radius: 2px; background: var(--muted); }
     .voice small { color: var(--muted); font-size: .75rem; }
+    .msg.locked {
+      justify-self: start; width: 220px; padding: 4px; border: 0; font: inherit; color: inherit; text-align: center; cursor: pointer;
+    }
+    .locked-media {
+      position: relative; display: block; aspect-ratio: 4 / 5; border-radius: 14px; overflow: hidden;
+      background: linear-gradient(160deg, hsl(330 55% 35%), hsl(10 45% 18%));
+    }
+    .locked-media img {
+      display: block; width: 100%; height: 100%; object-fit: cover;
+      filter: blur(22px) saturate(1.2); transform: scale(1.15); transition: filter .5s ease, transform .5s ease;
+    }
+    .lock-overlay {
+      position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 4px;
+      background: rgba(13, 9, 16, .35); transition: opacity .3s ease;
+    }
+    .lock {
+      width: 44px; height: 44px; border-radius: 50%; background: var(--accent); display: grid; place-items: center;
+      margin-bottom: 6px; box-shadow: 0 8px 24px rgba(255, 79, 154, .45);
+    }
+    .lock svg { width: 20px; height: 20px; }
+    .lock-overlay strong { font-size: .9rem; }
+    .lock-overlay small { font-size: .75rem; color: #e6d6df; }
+    .msg.locked:hover .lock { transform: scale(1.06); }
+    .msg.locked.unlocked { cursor: default; }
+    .msg.locked.unlocked img { filter: none; transform: none; }
+    .msg.locked.unlocked .lock-overlay { opacity: 0; pointer-events: none; }
     .typing { display: inline-flex; gap: 4px; padding: 12px 14px; }
     .typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: blink 1.2s infinite both; }
     .typing i:nth-child(2) { animation-delay: .2s; }
@@ -345,22 +371,33 @@
         </ul>
       </div>
 
-      <div class="hero-chat" aria-hidden="true">
-        <div class="phone">
+      <div class="hero-chat">
+        <div class="phone" aria-label="Example chat with Kylie">
           <div class="phone-head">
-            <div class="avatar">K</div>
+            <div class="avatar" aria-hidden="true">K</div>
             <div><strong>Kylie</strong><span>Online now</span></div>
           </div>
           <div class="msgs">
             <div class="msg her">Morning handsome 😘 Woke up thinking about you lol. Did you sleep okay before your interview?</div>
             <div class="msg you">barely lol. it's at 2</div>
-            <div class="msg her voice">
+            <div class="msg her voice" aria-hidden="true">
               <span class="play"><svg viewBox="0 0 24 24" fill="#1a0b12"><path d="M6 4l14 8-14 8z"/></svg></span>
               <span class="wave" id="wave"></span>
               <small>0:14</small>
             </div>
             <div class="msg her">Then tonight it's my job to help you relax 😉 Call me after, I'll be in bed waiting 🥵</div>
-            <div class="msg her typing"><i></i><i></i><i></i></div>
+            <!-- Locked photo. Until the image file exists, a blank gradient placeholder shows instead. -->
+            <button class="msg her locked" id="locked-photo" type="button" aria-label="See image attachment. Tap to unlock.">
+              <span class="locked-media">
+                <img src="assets/chat/kylie-photo.jpg" alt="Photo from Kylie" onerror="this.remove()">
+                <span class="lock-overlay">
+                  <span class="lock" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#1a0b12" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+                  <strong>See image attachment</strong>
+                  <small>Tap to unlock</small>
+                </span>
+              </span>
+            </button>
+            <div class="msg her typing" aria-hidden="true"><i></i><i></i><i></i></div>
           </div>
         </div>
       </div>
@@ -594,6 +631,13 @@
       const i = document.createElement('i');
       i.style.height = h + 'px';
       wave.appendChild(i);
+    });
+
+    // Locked photo in the chat preview
+    const lockedPhoto = document.getElementById('locked-photo');
+    lockedPhoto.addEventListener('click', () => {
+      lockedPhoto.classList.add('unlocked');
+      lockedPhoto.setAttribute('aria-label', 'Photo from Kylie');
     });
 
     // Character grid
