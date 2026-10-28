@@ -9,7 +9,7 @@
   <meta property="og:description" content="Chat, voice notes, photos and video with a girlfriend who actually remembers you. Join the waitlist. 18+.">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#0d0910">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23ff4f9a'/%3E%3Cstop offset='1' stop-color='%23ff9a6b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Cpath d='M22 16v32M22 33l18-17M27 29l15 19' stroke='%230d0910' stroke-width='6' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="assets/logo/logo-a-heart-k-v2.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -60,11 +60,10 @@
     main, header, footer { position: relative; z-index: 1; }
 
     /* Nav */
-    .nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; gap: 12px; }
+    .nav { display: flex; align-items: center; justify-content: space-between; padding-block: 20px; gap: 12px; }
     .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.15rem; text-decoration: none; letter-spacing: -0.01em; }
     .brand-mark {
-      width: 34px; height: 34px; border-radius: 10px; background: var(--accent);
-      display: grid; place-items: center; color: var(--on-accent); font-weight: 800; font-size: 1.05rem;
+      display: block; width: 34px; height: 34px; border-radius: 8.5px; /* matches the SVG's rx 16 of 64 */
       box-shadow: 0 6px 24px rgba(255, 79, 154, 0.35);
     }
     .nav-right { display: flex; align-items: center; gap: 12px; }
@@ -83,7 +82,7 @@
     /* Hero */
     .hero {
       display: grid; grid-template-columns: 1.1fr 0.9fr; column-gap: 56px; row-gap: 32px;
-      grid-template-areas: "copy card" "chat card"; align-items: start; padding: 48px 0 88px;
+      grid-template-areas: "copy card" "chat card"; align-items: start; padding-block: 48px 88px;
     }
     .hero-copy { grid-area: copy; }
     .hero-chat { grid-area: chat; }
@@ -264,6 +263,14 @@
       background: var(--accent); color: var(--on-accent); opacity: 0; transform: translateY(-4px); transition: all .2s ease;
     }
     .girl:hover .hover-cta, .girl:focus-visible .hover-cta { opacity: 1; transform: none; }
+    .girl.locked { cursor: default; }
+    .girl.locked:hover { transform: none; border-color: var(--border); }
+    .girl.locked .portrait { filter: blur(6px) saturate(.8); transform: scale(1.1); }
+    .girl .soon {
+      position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 4px;
+      padding: 16px; text-align: center; background: rgba(13, 9, 16, .45);
+    }
+    .girl .soon strong { font-size: .95rem; line-height: 1.3; }
 
     /* Features */
     .features { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
@@ -318,18 +325,20 @@
       .girls, .features { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 900px) {
-      .hero { grid-template-columns: 1fr; grid-template-areas: "copy" "card" "chat"; padding: 28px 0 64px; }
+      .hero { grid-template-columns: 1fr; grid-template-areas: "copy" "card" "chat"; padding-block: 28px 64px; }
       .card { position: static; }
       .builder, .privacy { grid-template-columns: 1fr; }
       section { padding: 64px 0; }
     }
     @media (max-width: 480px) {
-      .wrap { padding: 0 16px; }
+      .wrap { padding-inline: 16px; }
+      .nav { padding-block: 16px; }
       .card { padding: 22px 16px; }
       .nav .btn-ghost { display: none; }
       .girls { gap: 10px; }
       .features { grid-template-columns: 1fr; }
       .girl .vibe { display: none; }
+      .girl.extra { display: none; }
       .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
       .grid-3 .opt-tile { padding: 11px 6px; font-size: .85rem; }
     }
@@ -345,7 +354,7 @@
   <header>
     <div class="wrap nav">
       <a class="brand" href="#">
-        <span class="brand-mark" aria-hidden="true">K</span>
+        <img class="brand-mark" src="assets/logo/logo-a-heart-k-v2.svg" alt="" width="34" height="34">
         Kylie AI
       </a>
       <div class="nav-right">
@@ -612,15 +621,16 @@
     const SIGNUP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzMYmEOvY4I5H6Tpm_gjJfO7dEewWGS6fRTDlJjv3su4sUj_-19tRk6_YGmZptdi0mUdA/exec';
 
     // Character cards. Drop a portrait at the img path (3:4 ratio works best) and it replaces the placeholder.
+    // Cards with locked: true render as "More girls coming soon" teasers and can't be picked.
     const CHARACTERS = [
-      { name: 'Kylie',     age: 24, style: 'realistic', vibe: 'Sweet, a little clingy, texts you first',  tags: ['Girlfriend', 'Playful'],  img: 'assets/girls/kylie.jpg',     hue: 330 },
-      { name: 'Sofia',     age: 27, style: 'realistic', vibe: 'Confident and flirty, a bit of trouble',    tags: ['Flirty', 'Bold'],         img: 'assets/girls/sofia.jpg',     hue: 10 },
-      { name: 'Hana',      age: 22, style: 'anime',     vibe: 'Shy at first, then won\'t stop talking',     tags: ['Shy', 'Gamer'],           img: 'assets/girls/hana.jpg',      hue: 280 },
-      { name: 'Valentina', age: 29, style: 'realistic', vibe: 'Elegant, witty, hard to impress',            tags: ['Classy', 'Sarcastic'],    img: 'assets/girls/valentina.jpg', hue: 350 },
-      { name: 'Yumi',      age: 23, style: 'anime',     vibe: 'Chaotic energy, loves late-night calls',     tags: ['Chaotic', 'Night owl'],   img: 'assets/girls/yumi.jpg',      hue: 300 },
-      { name: 'Ava',       age: 25, style: 'realistic', vibe: 'Gym girl next door, keeps you motivated',    tags: ['Sporty', 'Caring'],       img: 'assets/girls/ava.jpg',       hue: 20 },
-      { name: 'Rin',       age: 24, style: 'anime',     vibe: 'Cool exterior, secretly a softie',           tags: ['Tsundere', 'Artsy'],      img: 'assets/girls/rin.jpg',       hue: 260 },
-      { name: 'Chloe',     age: 26, style: 'realistic', vibe: 'Bookish, curious, deep 2am talks',           tags: ['Smart', 'Romantic'],      img: 'assets/girls/chloe.jpg',     hue: 340 },
+      { name: 'Kylie',     age: 24, style: 'realistic', vibe: 'Sweet, a little clingy, texts you first',  tags: ['Girlfriend', 'Playful'],  img: 'assets/chat/kylie-photo.jpg', hue: 330 },
+      { name: 'Sofia',     age: 27, style: 'realistic', vibe: 'Confident and flirty, a bit of trouble',    tags: ['Flirty', 'Bold'],         locked: true, hue: 10 },
+      { name: 'Hana',      age: 22, style: 'anime',     vibe: 'Shy at first, then won\'t stop talking',     tags: ['Shy', 'Gamer'],           img: 'assets/chat/hana-photo.jpg',   hue: 280 },
+      { name: 'Valentina', age: 29, style: 'realistic', vibe: 'Elegant, witty, hard to impress',            tags: ['Classy', 'Sarcastic'],    locked: true, hue: 350 },
+      { name: 'Yumi',      age: 23, style: 'anime',     vibe: 'Chaotic energy, loves late-night calls',     tags: ['Chaotic', 'Night owl'],   locked: true, hue: 300 },
+      { name: 'Ava',       age: 25, style: 'realistic', vibe: 'Gym girl next door, keeps you motivated',    tags: ['Sporty', 'Caring'],       locked: true, hue: 20 },
+      { name: 'Rin',       age: 24, style: 'anime',     vibe: 'Cool exterior, secretly a softie',           tags: ['Tsundere', 'Artsy'],      locked: true, hue: 260 },
+      { name: 'Chloe',     age: 26, style: 'realistic', vibe: 'Bookish, curious, deep 2am talks',           tags: ['Smart', 'Romantic'],      locked: true, hue: 340 },
     ];
 
     document.getElementById('year').textContent = new Date().getFullYear();
@@ -643,14 +653,32 @@
     // Character grid
     const grid = document.getElementById('girls-grid');
     const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const LOCK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="#1a0b12" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
     CHARACTERS.forEach((c) => {
+      const portraitBg = `background: radial-gradient(120% 80% at 30% 20%, hsl(${c.hue} 80% 62% / .55), transparent 60%), linear-gradient(160deg, hsl(${c.hue} 55% 28%), hsl(${(c.hue + 30) % 360} 45% 14%))`;
+
+      if (c.locked) {
+        const card = document.createElement('div');
+        card.className = 'girl locked';
+        card.dataset.style = c.style;
+        card.setAttribute('aria-label', 'More girls coming soon');
+        card.innerHTML = `
+          <div class="portrait" style="${portraitBg}"></div>
+          <div class="soon">
+            <span class="lock" aria-hidden="true">${LOCK_ICON}</span>
+            <strong>More girls coming soon</strong>
+          </div>`;
+        grid.appendChild(card);
+        return;
+      }
+
       const card = document.createElement('button');
       card.type = 'button';
       card.className = 'girl';
       card.dataset.style = c.style;
       card.setAttribute('aria-label', `Get early access with ${c.name}, ${c.age}`);
       card.innerHTML = `
-        <div class="portrait" style="background: radial-gradient(120% 80% at 30% 20%, hsl(${c.hue} 80% 62% / .55), transparent 60%), linear-gradient(160deg, hsl(${c.hue} 55% 28%), hsl(${(c.hue + 30) % 360} 45% 14%))">
+        <div class="portrait" style="${portraitBg}">
           <span class="initial">${esc(c.name[0])}</span>
           <img src="${esc(c.img)}" alt="" loading="lazy" onerror="this.remove()">
         </div>
@@ -665,11 +693,24 @@
       grid.appendChild(card);
     });
 
+    function applyFilter(f) {
+      let unlocked = 0;
+      const locked = [];
+      grid.querySelectorAll('.girl').forEach((g) => {
+        g.hidden = f !== 'all' && g.dataset.style !== f;
+        if (g.hidden) return;
+        if (g.classList.contains('locked')) locked.push(g); else unlocked++;
+      });
+      // On phones, keep only enough "coming soon" cards to finish the last row (see .girl.extra).
+      const keep = unlocked % 2 ? 1 : 2;
+      locked.forEach((g, i) => g.classList.toggle('extra', i >= keep));
+    }
+    applyFilter('all');
+
     document.querySelectorAll('.tab').forEach((tab) => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.tab').forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
-        const f = tab.dataset.filter;
-        grid.querySelectorAll('.girl').forEach((g) => { g.hidden = f !== 'all' && g.dataset.style !== f; });
+        applyFilter(tab.dataset.filter);
       });
     });
 

@@ -47,9 +47,9 @@ https://breakthroughgamer.github.io/KylieAI/?utm_source=tiktok&utm_campaign=laun
 ## Customizing
 
 - **Colors:** edit the variables at the top of the `<style>` block (`--accent-1`, `--accent-2`, `--bg`, and so on).
-- **Logo:** replace the `K` in `.brand-mark` with an `<img>`, or swap the inline SVG favicon in `<head>`.
+- **Logo:** the header logo and favicon both use `assets/logo/logo-a-heart-k-v2.svg`. Other concepts and a side-by-side preview are in `assets/logo/` (open `preview.html`).
 - **Copy:** the hero, feature cards, and FAQ are plain HTML.
-- **Character cards:** edit the `CHARACTERS` list near the bottom of `index.html` (name, age, style, vibe, tags). To add a portrait, save it at the card's `img` path, for example `assets/girls/kylie.jpg`, ideally in a 3:4 ratio. Until an image exists, the card shows a colored placeholder.
+- **Character cards:** edit the `CHARACTERS` list near the bottom of `index.html` (name, age, style, vibe, tags). To add a portrait, save it at the card's `img` path, for example `assets/chat/kylie-photo.jpg`, ideally in a 3:4 ratio. Until an image exists, the card shows a colored placeholder. Cards marked `locked: true` show a "More girls coming soon" lock instead; give one an `img` and remove `locked` to open it up.
 
 ## Updating the Apps Script
 
