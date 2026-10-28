@@ -12,9 +12,11 @@
  */
 
 const SHEET_NAME = 'Signups';
+// New columns go at the end so rows already in the sheet stay lined up.
 const HEADERS = [
   'Timestamp', 'Email', 'Chat', 'Image', 'Video', 'Notes',
   'Referrer', 'UTM source', 'UTM medium', 'UTM campaign',
+  'Voice', 'Style', 'Character', '18+ confirmed',
 ];
 
 function doPost(e) {
@@ -27,6 +29,7 @@ function doPost(e) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || email.length > 254) {
     return json_({ ok: false, error: 'invalid_email' });
   }
+  if (p.age_confirmed !== 'yes') return json_({ ok: false, error: 'age_not_confirmed' });
 
   const lock = LockService.getScriptLock();
   lock.waitLock(10000);
@@ -48,6 +51,10 @@ function doPost(e) {
       clean_(p.utm_source, 100),
       clean_(p.utm_medium, 100),
       clean_(p.utm_campaign, 100),
+      clean_(p.voice, 3),
+      clean_(p.style, 20),
+      clean_(p.character, 40),
+      'yes',
     ]);
     return json_({ ok: true });
   } finally {
@@ -64,10 +71,10 @@ function getSheet_() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   let sheet = ss.getSheetByName(SHEET_NAME);
   if (!sheet) sheet = ss.insertSheet(SHEET_NAME);
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow(HEADERS);
+  // Write the header row on first use, and extend it when new columns are added.
+  if (sheet.getLastRow() === 0 || sheet.getLastColumn() < HEADERS.length) {
+    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]).setFontWeight('bold');
     sheet.setFrozenRows(1);
-    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
   }
   return sheet;
 }

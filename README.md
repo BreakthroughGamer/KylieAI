@@ -49,6 +49,11 @@ https://breakthroughgamer.github.io/KylieAI/?utm_source=tiktok&utm_campaign=laun
 - **Colors:** edit the variables at the top of the `<style>` block (`--accent-1`, `--accent-2`, `--bg`, and so on).
 - **Logo:** replace the `K` in `.brand-mark` with an `<img>`, or swap the inline SVG favicon in `<head>`.
 - **Copy:** the hero, feature cards, and FAQ are plain HTML.
+- **Character cards:** edit the `CHARACTERS` list near the bottom of `index.html` (name, age, style, vibe, tags). To add a portrait, save it at the card's `img` path, for example `assets/girls/kylie.jpg`, ideally in a 3:4 ratio. Until an image exists, the card shows a colored placeholder.
+
+## Updating the Apps Script
+
+After you change `Code.gs`, paste it into the script editor again, then go to **Deploy → Manage deployments → ✏️ Edit**, set **Version: New version**, and click **Deploy**. The `/exec` URL stays the same. If you skip this step, the old script keeps running and silently drops any new fields.
 
 ## Custom domain later
 
