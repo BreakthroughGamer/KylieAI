@@ -122,11 +122,13 @@
     .msg { max-width: 82%; padding: 10px 14px; border-radius: 18px; font-size: .92rem; line-height: 1.45; }
     .msg.her { background: var(--surface-2); border-bottom-left-radius: 6px; }
     .msg.you { justify-self: end; background: var(--accent); color: var(--on-accent); border-bottom-right-radius: 6px; font-weight: 600; }
-    .voice { display: flex; align-items: center; gap: 10px; }
+    .voice { display: flex; align-items: center; gap: 10px; justify-self: start; border: 0; font: inherit; color: inherit; cursor: pointer; }
+    .voice:focus-visible { outline: 2px solid var(--accent-1); outline-offset: 2px; }
     .voice .play { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; flex: none; }
     .voice .play svg { width: 12px; height: 12px; margin-left: 2px; }
     .wave { display: flex; align-items: center; gap: 3px; height: 22px; }
     .wave i { display: block; width: 3px; border-radius: 2px; background: var(--muted); }
+    .wave i.on { background: var(--accent-1); }
     .voice small { color: var(--muted); font-size: .75rem; }
     .msg.locked {
       justify-self: start; width: 220px; padding: 4px; border: 0; font: inherit; color: inherit; text-align: center; cursor: pointer;
@@ -391,11 +393,12 @@
           <div class="msgs">
             <div class="msg her">Morning handsome 😘 Woke up thinking about you lol. Did you sleep okay before your interview?</div>
             <div class="msg you">barely lol. it's at 2</div>
-            <div class="msg her voice" aria-hidden="true">
-              <span class="play"><svg viewBox="0 0 24 24" fill="#1a0b12"><path d="M6 4l14 8-14 8z"/></svg></span>
+            <button class="msg her voice" id="voice-note" type="button" aria-label="Play voice note from Kylie">
+              <span class="play"><svg viewBox="0 0 24 24" fill="#1a0b12" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg></span>
               <span class="wave" id="wave"></span>
-              <small>0:14</small>
-            </div>
+              <small>0:03</small>
+              <audio id="voice-audio" src="assets/voice/kylie-voice-note.mp3" preload="metadata"></audio>
+            </button>
             <div class="msg her">Then tonight it's my job to help you relax 😉 Call me after, I'll be in bed waiting 🥵</div>
             <!-- Locked photo. Until the image file exists, a blank gradient placeholder shows instead. -->
             <button class="msg her locked" id="locked-photo" type="button" aria-label="See image attachment. Tap to unlock.">
@@ -643,6 +646,44 @@
       const i = document.createElement('i');
       i.style.height = h + 'px';
       wave.appendChild(i);
+    });
+
+    // Voice note: tap to play/pause; the waveform fills in as it plays
+    const voiceBtn = document.getElementById('voice-note');
+    const voiceAudio = document.getElementById('voice-audio');
+    const voiceTime = voiceBtn.querySelector('small');
+    const voiceIcon = voiceBtn.querySelector('.play svg');
+    const bars = [...wave.children];
+    const PLAY_ICON = '<path d="M6 4l14 8-14 8z"/>';
+    const PAUSE_ICON = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>';
+    const fmtTime = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+
+    function drawVoice() {
+      const d = voiceAudio.duration;
+      if (!isFinite(d)) return;
+      const t = voiceAudio.currentTime;
+      bars.forEach((b, i) => b.classList.toggle('on', i < (t / d) * bars.length));
+      voiceTime.textContent = fmtTime(voiceAudio.paused && !t ? d : t);
+      if (!voiceAudio.paused) requestAnimationFrame(drawVoice);
+    }
+
+    voiceAudio.addEventListener('loadedmetadata', drawVoice);
+    voiceAudio.addEventListener('play', () => {
+      voiceIcon.innerHTML = PAUSE_ICON;
+      voiceBtn.setAttribute('aria-label', 'Pause voice note');
+      drawVoice();
+    });
+    voiceAudio.addEventListener('pause', () => {
+      voiceIcon.innerHTML = PLAY_ICON;
+      voiceBtn.setAttribute('aria-label', 'Play voice note from Kylie');
+    });
+    voiceAudio.addEventListener('ended', () => {
+      voiceAudio.currentTime = 0;
+      drawVoice();
+    });
+    voiceBtn.addEventListener('click', () => {
+      if (voiceAudio.paused) voiceAudio.play().catch(() => {});
+      else voiceAudio.pause();
     });
 
     // Locked photo in the chat preview
