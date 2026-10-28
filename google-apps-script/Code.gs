@@ -1,15 +1,13 @@
-/**
- * Kylie AI waitlist: receives form posts from index.html and appends them to this Google Sheet.
- *
- * Setup (once):
- *   1. Create a Google Sheet. Extensions -> Apps Script. Paste this file in, then save.
- *   2. Deploy -> New deployment -> type "Web app".
- *        Execute as: Me    Who has access: Anyone
- *   3. Copy the web app URL (ends in /exec) into SIGNUP_ENDPOINT in index.html.
- *
- * After editing this script, use Deploy -> Manage deployments -> edit -> Version: "New version"
- * so the same /exec URL picks up your changes.
- */
+// Kylie AI waitlist: receives form posts from index.html and appends them to this Google Sheet.
+//
+// Setup (once):
+//   1. Create a Google Sheet. Extensions -> Apps Script. Paste this file in, then save.
+//   2. Deploy -> New deployment -> type "Web app".
+//        Execute as: Me    Who has access: Anyone
+//   3. Copy the web app URL (ends in /exec) into SIGNUP_ENDPOINT in index.html.
+//
+// After editing this script, use Deploy -> Manage deployments -> edit -> Version: "New version"
+// so the same /exec URL picks up your changes.
 
 const SHEET_NAME = 'Signups';
 // New columns go at the end so rows already in the sheet stay lined up.
