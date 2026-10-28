@@ -144,6 +144,11 @@
       display: flex; align-items: center; gap: 10px; margin: -6px 0 18px; padding: 10px 14px; border-radius: 12px;
       background: var(--accent-soft); border: 1px solid rgba(255, 79, 154, .35); font-size: .88rem; font-weight: 600;
     }
+    .perk-tag {
+      flex: none; background: var(--accent); color: var(--on-accent); font-size: .68rem; font-weight: 800;
+      letter-spacing: .08em; text-transform: uppercase; padding: 3px 8px; border-radius: 6px;
+      box-shadow: 0 4px 14px rgba(255, 79, 154, .35);
+    }
     .card h2 { margin: 0 0 4px; font-size: 1.4rem; letter-spacing: -0.02em; }
     .card .sub { margin: 0 0 20px; color: var(--muted); font-size: .95rem; }
 
@@ -362,7 +367,7 @@
 
       <div class="card" id="signup">
         <form id="signup-form" novalidate>
-          <div class="perk">🎁 <span>Early access bonus: <strong>free credits</strong> + <strong>50% off every month</strong></span></div>
+          <div class="perk"><span class="perk-tag">Limited</span> <span>Early access bonus: <strong>free credits</strong> + <strong>50% off every month</strong></span></div>
           <h2 id="form-title">Get early access</h2>
           <p class="sub" id="form-sub">Free to join. No card needed. Takes 20 seconds.</p>
 
