@@ -14,7 +14,7 @@ const SHEET_NAME = 'Signups';
 const HEADERS = [
   'Timestamp', 'Email', 'Chat', 'Image', 'Video', 'Notes',
   'Referrer', 'UTM source', 'UTM medium', 'UTM campaign',
-  'Voice', 'Style', 'Character', '18+ confirmed',
+  'Voice', 'Style', 'Character', '18+ confirmed', 'Signup ID',
 ];
 
 function doPost(e) {
@@ -53,6 +53,7 @@ function doPost(e) {
       clean_(p.style, 20),
       clean_(p.character, 40),
       'yes',
+      clean_(p.signup_id, 64), // matches the TrafficJunky conversion's transaction ID (cti)
     ]);
     return json_({ ok: true });
   } finally {

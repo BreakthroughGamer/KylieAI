@@ -9,6 +9,8 @@
   <meta property="og:description" content="Chat, voice notes, photos and video with a girlfriend who actually remembers you. Join the waitlist. 18+.">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#0d0910">
+  <!-- TrafficJunky: lets their conversion pixel read browser client hints -->
+  <meta http-equiv="Delegate-CH" content="sec-ch-ua https://ads.trafficjunky.net; sec-ch-ua-arch https://ads.trafficjunky.net; sec-ch-ua-full-version-list https://ads.trafficjunky.net; sec-ch-ua-mobile https://ads.trafficjunky.net; sec-ch-ua-model https://ads.trafficjunky.net; sec-ch-ua-platform https://ads.trafficjunky.net; sec-ch-ua-platform-version https://ads.trafficjunky.net;">
   <link rel="icon" type="image/svg+xml" href="assets/logo/logo-a-heart-k-v2.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -739,6 +741,29 @@
     const params = new URLSearchParams(location.search);
     const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
+    // TrafficJunky CPA conversion pixel. Fires once per successful signup, never on page load,
+    // so only real signups count as conversions. signupId matches the "Signup ID" column in the sheet.
+    function trackConversion(signupId, character) {
+      const q = new URLSearchParams({
+        a: '1000596701',
+        member_id: '1009366881',
+        cb: `${Date.now()}${Math.floor(Math.random() * 1e6)}`,
+        cti: signupId,
+        ctv: '',
+        ctd: `Waitlist+${character || 'Any'}`,
+      });
+      const img = document.createElement('img');
+      img.id = '1000596701_cpa_testing';
+      img.src = `https://ads.trafficjunky.net/ct?${q}`;
+      img.width = 1;
+      img.height = 1;
+      img.alt = '';
+      img.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;pointer-events:none';
+      document.body.appendChild(img);
+    }
+
+    const newSignupId = () => (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`);
+
     form.addEventListener('change', (e) => {
       if (e.target.name === 'interest') interestError.textContent = '';
       if (e.target === ageInput) ageError.textContent = '';
@@ -771,7 +796,9 @@
         return;
       }
 
+      const signupId = newSignupId();
       const data = new URLSearchParams({
+        signup_id: signupId,
         email,
         chat: interests.includes('chat') ? 'yes' : '',
         voice: interests.includes('voice') ? 'yes' : '',
@@ -796,6 +823,7 @@
           // Apps Script doesn't send CORS headers, so the response is opaque.
           // A network failure still throws, which is the case we can catch.
           await fetch(SIGNUP_ENDPOINT, { method: 'POST', mode: 'no-cors', body: data });
+          trackConversion(signupId, form.character.value);
         } else {
           console.warn('[Kylie AI] Demo mode: SIGNUP_ENDPOINT is empty, signup not saved.', Object.fromEntries(data));
           document.getElementById('demo-note').hidden = false;

@@ -18,7 +18,7 @@ A single-page waitlist site. Signups go into a Google Sheet you own. It's free t
    const SIGNUP_ENDPOINT = 'https://script.google.com/macros/s/XXXX/exec';
    ```
 
-Each signup adds a row to a `Signups` tab: timestamp, email, chat, image, video, notes, referrer, and UTM tags. Duplicate emails are skipped.
+Each signup adds a row to a `Signups` tab: timestamp, email, chat, image, video, notes, referrer, UTM tags, voice, style, character, 18+ confirmation, and a signup ID. Duplicate emails are skipped.
 
 While `SIGNUP_ENDPOINT` is empty the page runs in **demo mode**: the form works, but it shows a yellow "not saved" note and nothing is stored.
 
@@ -43,6 +43,16 @@ Add UTM tags to the links you share, and they'll show up in the sheet:
 ```
 https://breakthroughgamer.github.io/KylieAI/?utm_source=tiktok&utm_campaign=launch
 ```
+
+## TrafficJunky conversion tracking
+
+The TrafficJunky CPA pixel fires once after each successful signup (not on page load, so visits don't count as conversions). It sends:
+
+- `cti`: a unique signup ID, also saved in the sheet's **Signup ID** column, so you can match TrafficJunky conversions to sheet rows
+- `ctd`: `Waitlist+<character>` (the girl they picked, or `Any`). No email or other personal data is sent.
+- `cb`: a timestamp plus random number for cache busting
+
+The pixel ID and member ID are in `trackConversion()` in `index.html`; the client-hints `<meta http-equiv="Delegate-CH">` tag is in `<head>`. It doesn't fire in demo mode. Because the Apps Script response can't be read from the page, a repeat signup with an email that's already on the list still fires the pixel, even though the sheet skips the duplicate row.
 
 ## Customizing
 
