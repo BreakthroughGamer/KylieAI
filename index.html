@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kylie AI — Early Access</title>
+  <meta name="description" content="Chat, create images, and generate video with Kylie AI. Join the waitlist for early access.">
+  <meta property="og:title" content="Kylie AI — Early Access">
+  <meta property="og:description" content="Chat, create images, and generate video. Join the waitlist for early access.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#0b0a10">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23a78bfa'/%3E%3Cstop offset='1' stop-color='%23f472b6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Cpath d='M22 16v32M22 33l18-17M27 29l15 19' stroke='%230b0a10' stroke-width='6' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== Brand tokens: change these to re-skin the whole page ===== */
+    :root {
+      --bg: #0b0a10;
+      --surface: #14121c;
+      --surface-2: #1b1826;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.16);
+      --text: #f4f2fa;
+      --muted: #a39fb3;
+      --accent-1: #a78bfa;
+      --accent-2: #f472b6;
+      --accent: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      --danger: #fb7185;
+      --radius: 16px;
+      --max: 1120px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: inherit; }
+    img { max-width: 100%; }
+
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+
+    /* Background glow */
+    .glow {
+      position: absolute; inset: 0 0 auto 0; height: 900px; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(600px 400px at 15% 10%, rgba(167, 139, 250, 0.22), transparent 70%),
+        radial-gradient(500px 380px at 85% 25%, rgba(244, 114, 182, 0.16), transparent 70%);
+    }
+    .grid-bg {
+      position: absolute; inset: 0 0 auto 0; height: 900px; pointer-events: none; z-index: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse at 50% 0%, #000 20%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse at 50% 0%, #000 20%, transparent 70%);
+      opacity: 0.5;
+    }
+    main, header, footer { position: relative; z-index: 1; }
+
+    /* Nav */
+    .nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.15rem; text-decoration: none; letter-spacing: -0.01em; }
+    .brand-mark {
+      width: 34px; height: 34px; border-radius: 10px; background: var(--accent);
+      display: grid; place-items: center; color: var(--bg); font-weight: 800; font-size: 1.05rem;
+      box-shadow: 0 6px 24px rgba(167, 139, 250, 0.35);
+    }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      border: 0; border-radius: 999px; padding: 12px 22px; font: inherit; font-weight: 700;
+      cursor: pointer; text-decoration: none; transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+    }
+    .btn-primary { background: var(--accent); color: #140f1f; box-shadow: 0 8px 30px rgba(244, 114, 182, 0.25); }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 36px rgba(244, 114, 182, 0.35); }
+    .btn-primary:disabled { opacity: .6; cursor: progress; transform: none; }
+    .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border-strong); padding: 10px 18px; }
+    .btn-ghost:hover { background: var(--surface); }
+
+    /* Hero */
+    .hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center; padding: 56px 0 88px; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px; font-size: .85rem; font-weight: 600; color: var(--muted);
+      border: 1px solid var(--border-strong); background: rgba(20, 18, 28, .6); padding: 6px 14px; border-radius: 999px;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 0 4px rgba(74, 222, 128, .15); }
+    h1 {
+      font-size: clamp(2.4rem, 5.4vw, 4rem); line-height: 1.05; letter-spacing: -0.035em; margin: 22px 0 18px; font-weight: 800;
+    }
+    .gradient-text { background: var(--accent); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .lede { font-size: 1.15rem; color: var(--muted); max-width: 520px; margin: 0 0 28px; }
+    .pills { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; padding: 0; list-style: none; }
+    .pills li {
+      display: inline-flex; align-items: center; gap: 8px; font-size: .92rem; font-weight: 600;
+      background: var(--surface); border: 1px solid var(--border); padding: 8px 14px; border-radius: 999px;
+    }
+
+    /* Signup card */
+    .card {
+      background: linear-gradient(180deg, rgba(27, 24, 38, .92), rgba(20, 18, 28, .92));
+      border: 1px solid var(--border-strong); border-radius: 22px; padding: 28px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .05);
+      backdrop-filter: blur(8px);
+    }
+    .card h2 { margin: 0 0 4px; font-size: 1.35rem; letter-spacing: -0.02em; }
+    .card .sub { margin: 0 0 22px; color: var(--muted); font-size: .95rem; }
+
+    .field { margin-bottom: 18px; }
+    .label { display: block; font-weight: 700; font-size: .9rem; margin-bottom: 8px; }
+    .label .opt { color: var(--muted); font-weight: 500; }
+    input[type="email"], textarea {
+      width: 100%; font: inherit; color: var(--text); background: var(--bg);
+      border: 1px solid var(--border-strong); border-radius: 12px; padding: 13px 14px; outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    textarea { resize: vertical; min-height: 76px; }
+    input[type="email"]::placeholder, textarea::placeholder { color: #6f6a80; }
+    input[type="email"]:focus, textarea:focus { border-color: var(--accent-1); box-shadow: 0 0 0 4px rgba(167, 139, 250, .18); }
+
+    .options { display: grid; gap: 10px; border: 0; padding: 0; margin: 0; }
+    .options legend { padding: 0; }
+    .option {
+      position: relative; display: flex; align-items: center; gap: 12px; cursor: pointer;
+      background: var(--bg); border: 1px solid var(--border-strong); border-radius: 12px; padding: 12px 14px;
+      transition: border-color .15s ease, background .15s ease;
+    }
+    .option:hover { border-color: rgba(167, 139, 250, .5); }
+    .option input { position: absolute; opacity: 0; pointer-events: none; }
+    .option .ico {
+      flex: none; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center;
+      background: var(--surface-2); border: 1px solid var(--border);
+    }
+    .option .ico svg { width: 18px; height: 18px; }
+    .option .txt { flex: 1; min-width: 0; }
+    .option .txt strong { display: block; font-size: .95rem; }
+    .option .txt span { display: block; font-size: .82rem; color: var(--muted); line-height: 1.4; }
+    .option .check {
+      flex: none; width: 22px; height: 22px; border-radius: 7px; border: 1.5px solid var(--border-strong);
+      display: grid; place-items: center; transition: all .15s ease;
+    }
+    .option .check svg { width: 14px; height: 14px; opacity: 0; transition: opacity .15s ease; }
+    .option:has(input:checked) { border-color: var(--accent-1); background: rgba(167, 139, 250, .08); }
+    .option:has(input:checked) .check { background: var(--accent); border-color: transparent; }
+    .option:has(input:checked) .check svg { opacity: 1; }
+    .option:has(input:focus-visible) { box-shadow: 0 0 0 4px rgba(167, 139, 250, .25); }
+
+    .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .error { color: var(--danger); font-size: .85rem; margin: 8px 0 0; min-height: 0; }
+    .error:empty { display: none; }
+    .submit { width: 100%; padding: 15px 22px; font-size: 1rem; margin-top: 4px; }
+    .fine { text-align: center; color: var(--muted); font-size: .8rem; margin: 12px 0 0; }
+
+    .success { display: none; text-align: center; padding: 24px 6px; }
+    .success .badge {
+      width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 16px; background: var(--accent);
+      display: grid; place-items: center; box-shadow: 0 10px 40px rgba(244, 114, 182, .35);
+    }
+    .success .badge svg { width: 30px; height: 30px; }
+    .success h2 { font-size: 1.5rem; }
+    .success p { color: var(--muted); margin: 8px 0 0; }
+    .demo-note { margin-top: 14px !important; font-size: .8rem; color: #fbbf24 !important; }
+    .card.done form { display: none; }
+    .card.done .success { display: block; }
+
+    /* Sections */
+    section { padding: 88px 0; border-top: 1px solid var(--border); }
+    .section-head { max-width: 640px; margin: 0 auto 48px; text-align: center; }
+    .kicker { color: var(--accent-1); font-weight: 700; font-size: .85rem; letter-spacing: .12em; text-transform: uppercase; }
+    h3.title { font-size: clamp(1.8rem, 3.6vw, 2.6rem); letter-spacing: -0.03em; line-height: 1.15; margin: 10px 0 12px; }
+    .section-head p { color: var(--muted); margin: 0; font-size: 1.05rem; }
+
+    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .feature {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px;
+      transition: border-color .2s ease, transform .2s ease;
+    }
+    .feature:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+    .feature .ico {
+      width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; margin-bottom: 18px;
+      background: linear-gradient(135deg, rgba(167, 139, 250, .18), rgba(244, 114, 182, .18)); border: 1px solid var(--border-strong);
+    }
+    .feature .ico svg { width: 22px; height: 22px; }
+    .feature h4 { margin: 0 0 8px; font-size: 1.15rem; }
+    .feature p { margin: 0; color: var(--muted); }
+
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; counter-reset: step; }
+    .step { padding: 24px; border-radius: var(--radius); border: 1px dashed var(--border-strong); }
+    .step::before {
+      counter-increment: step; content: counter(step);
+      display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;
+      background: var(--surface-2); border: 1px solid var(--border-strong); font-weight: 800; margin-bottom: 14px;
+    }
+    .step h4 { margin: 0 0 6px; }
+    .step p { margin: 0; color: var(--muted); }
+
+    .faq { max-width: 760px; margin: 0 auto; display: grid; gap: 12px; }
+    details { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 22px; }
+    summary { cursor: pointer; font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; color: var(--muted); font-size: 1.3rem; line-height: 1; transition: transform .2s ease; }
+    details[open] summary::after { transform: rotate(45deg); }
+    details p { color: var(--muted); margin: 12px 0 0; }
+
+    .cta {
+      text-align: center; padding: 56px 28px; border-radius: 24px; border: 1px solid var(--border-strong);
+      background: radial-gradient(500px 220px at 50% 0%, rgba(167, 139, 250, .2), transparent 70%), var(--surface);
+    }
+    .cta h3 { margin: 0 0 10px; }
+    .cta p { color: var(--muted); margin: 0 0 24px; }
+
+    footer { border-top: 1px solid var(--border); padding: 28px 0 40px; color: var(--muted); font-size: .9rem; }
+    footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    footer a { text-decoration: none; }
+    footer a:hover { color: var(--text); }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; gap: 40px; padding: 32px 0 64px; }
+      .features, .steps { grid-template-columns: 1fr; }
+      section { padding: 64px 0; }
+    }
+    @media (max-width: 480px) {
+      .wrap { padding: 0 16px; }
+      .card { padding: 22px 18px; }
+      .nav .btn-ghost { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow" aria-hidden="true"></div>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="#">
+        <span class="brand-mark" aria-hidden="true">K</span>
+        Kylie AI
+      </a>
+      <a class="btn btn-ghost" href="#signup">Get early access</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap hero">
+      <div>
+        <span class="eyebrow"><span class="dot" aria-hidden="true"></span> Early access is open</span>
+        <h1>Talk, create, and <span class="gradient-text">bring ideas to life.</span></h1>
+        <p class="lede">
+          Kylie AI does conversation, image generation, and video creation in one place.
+          Join the waitlist to get in early and help decide what we build first.
+        </p>
+        <ul class="pills" aria-label="Capabilities">
+          <li>💬 Chat</li>
+          <li>🖼️ Image generation</li>
+          <li>🎬 Video generation</li>
+        </ul>
+      </div>
+
+      <div class="card" id="signup">
+        <form id="signup-form" novalidate>
+          <h2>Join the waitlist</h2>
+          <p class="sub">Tell us what you're after. It takes about 20 seconds.</p>
+
+          <div class="field">
+            <label class="label" for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+            <p class="error" id="email-error" role="alert"></p>
+          </div>
+
+          <fieldset class="field options" aria-describedby="interest-error">
+            <legend class="label">What are you most interested in? <span class="opt">(pick any)</span></legend>
+
+            <label class="option">
+              <input type="checkbox" name="interest" value="chat">
+              <span class="ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="url(#ig)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </span>
+              <span class="txt"><strong>Just chat</strong><span>Conversation, advice, ideas, company</span></span>
+              <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#140f1f" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+            </label>
+
+            <label class="option">
+              <input type="checkbox" name="interest" value="image">
+              <span class="ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="url(#ig)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              </span>
+              <span class="txt"><strong>Image generation</strong><span>Create pictures from a description</span></span>
+              <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#140f1f" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+            </label>
+
+            <label class="option">
+              <input type="checkbox" name="interest" value="video">
+              <span class="ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="url(#ig)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M22 8l-6 4 6 4V8z"/></svg>
+              </span>
+              <span class="txt"><strong>Video generation</strong><span>Turn ideas into short clips</span></span>
+              <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#140f1f" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+            </label>
+            <p class="error" id="interest-error" role="alert"></p>
+          </fieldset>
+
+          <div class="field">
+            <label class="label" for="notes">Anything you'd love Kylie to do? <span class="opt">(optional)</span></label>
+            <textarea id="notes" name="notes" maxlength="1000" placeholder="e.g. help me plan content, make thumbnails, animate my photos…"></textarea>
+          </div>
+
+          <!-- Honeypot: bots fill this in, people never see it -->
+          <div class="hp" aria-hidden="true">
+            <label for="website">Website</label>
+            <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+          </div>
+
+          <button class="btn btn-primary submit" type="submit" id="submit-btn">Get early access</button>
+          <p class="error" id="form-error" role="alert"></p>
+          <p class="fine">No spam. We'll only email you about access and launch news.</p>
+        </form>
+
+        <div class="success" role="status" aria-live="polite">
+          <div class="badge" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#140f1f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+          </div>
+          <h2>You're on the list!</h2>
+          <p>We'll email you when your spot opens up. Keep an eye on your inbox.</p>
+          <p class="demo-note" id="demo-note" hidden>Demo mode: no signup endpoint is set, so this wasn't saved. See README.md.</p>
+        </div>
+      </div>
+    </div>
+
+    <section id="features">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="kicker">What's coming</span>
+          <h3 class="title">One AI for everything you want to make</h3>
+          <p>Start with a conversation, then make pictures and video in the same place.</p>
+        </div>
+        <div class="features">
+          <article class="feature">
+            <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="url(#ig)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <h4>Chat</h4>
+            <p>Talk through ideas, get answers, or just hang out. Kylie keeps the context so you don't have to repeat yourself.</p>
+          </article>
+          <article class="feature">
+            <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="url(#ig)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
+            <h4>Image generation</h4>
+            <p>Describe what you see in your head and get finished images back, then tweak them until they're right.</p>
+          </article>
+          <article class="feature">
+            <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="url(#ig)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M22 8l-6 4 6 4V8z"/></svg></div>
+            <h4>Video generation</h4>
+            <p>Turn a prompt or a still image into a short clip you can post, share, or build on.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="how">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="kicker">How early access works</span>
+          <h3 class="title">Get in before everyone else</h3>
+        </div>
+        <div class="steps">
+          <div class="step"><h4>Join the waitlist</h4><p>Leave your email and tell us what you want to use Kylie for.</p></div>
+          <div class="step"><h4>Get your invite</h4><p>We open spots in waves, starting with the features people ask for most.</p></div>
+          <div class="step"><h4>Shape what's next</h4><p>Early users tell us what to build next, and we listen.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="kicker">FAQ</span>
+          <h3 class="title">Questions</h3>
+        </div>
+        <div class="faq">
+          <details>
+            <summary>Is joining the waitlist free?</summary>
+            <p>Yes. Joining costs nothing and doesn't commit you to anything.</p>
+          </details>
+          <details>
+            <summary>When does early access start?</summary>
+            <p>We're inviting people in waves. Everyone on the list gets an email as soon as their spot opens.</p>
+          </details>
+          <details>
+            <summary>What will you do with my email?</summary>
+            <p>We only use it to send you your invite and important launch updates. We never sell it, and you can ask to be removed at any time.</p>
+          </details>
+        </div>
+
+        <div class="cta" style="margin:64px auto 0; max-width:760px;">
+          <h3 class="title">Want in early?</h3>
+          <p>Spots open in waves. Get on the list now.</p>
+          <a class="btn btn-primary" href="#signup">Join the waitlist</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>© <span id="year"></span> Kylie AI</span>
+      <a href="#signup">Get early access</a>
+    </div>
+  </footer>
+
+  <!-- Shared gradient for icon strokes -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="ig" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#a78bfa"/>
+        <stop offset="1" stop-color="#f472b6"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <script>
+    // Paste your Google Apps Script web app URL here (see README.md).
+    // Leave it empty to run in demo mode: the form works but nothing is saved.
+    const SIGNUP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzMYmEOvY4I5H6Tpm_gjJfO7dEewWGS6fRTDlJjv3su4sUj_-19tRk6_YGmZptdi0mUdA/exec';
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const form = document.getElementById('signup-form');
+    const card = document.getElementById('signup');
+    const btn = document.getElementById('submit-btn');
+    const emailInput = document.getElementById('email');
+    const emailError = document.getElementById('email-error');
+    const interestError = document.getElementById('interest-error');
+    const formError = document.getElementById('form-error');
+
+    const params = new URLSearchParams(location.search);
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    form.addEventListener('change', (e) => {
+      if (e.target.name === 'interest') interestError.textContent = '';
+    });
+    emailInput.addEventListener('input', () => { emailError.textContent = ''; });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      formError.textContent = '';
+
+      const email = emailInput.value.trim();
+      const interests = [...form.querySelectorAll('input[name="interest"]:checked')].map((el) => el.value);
+
+      let ok = true;
+      if (!EMAIL_RE.test(email)) {
+        emailError.textContent = 'Please enter a valid email address.';
+        ok = false;
+      }
+      if (interests.length === 0) {
+        interestError.textContent = 'Pick at least one so we know what to build first.';
+        ok = false;
+      }
+      if (!ok) {
+        (EMAIL_RE.test(email) ? form.querySelector('input[name="interest"]') : emailInput).focus();
+        return;
+      }
+
+      const data = new URLSearchParams({
+        email,
+        chat: interests.includes('chat') ? 'yes' : '',
+        image: interests.includes('image') ? 'yes' : '',
+        video: interests.includes('video') ? 'yes' : '',
+        notes: form.notes.value.trim(),
+        website: form.website.value, // honeypot
+        referrer: document.referrer,
+        utm_source: params.get('utm_source') || '',
+        utm_medium: params.get('utm_medium') || '',
+        utm_campaign: params.get('utm_campaign') || '',
+      });
+
+      btn.disabled = true;
+      btn.textContent = 'Joining…';
+
+      try {
+        if (SIGNUP_ENDPOINT) {
+          // Apps Script doesn't send CORS headers, so the response is opaque.
+          // A network failure still throws, which is the case we can catch.
+          await fetch(SIGNUP_ENDPOINT, { method: 'POST', mode: 'no-cors', body: data });
+        } else {
+          console.warn('[Kylie AI] Demo mode: SIGNUP_ENDPOINT is empty, signup not saved.', Object.fromEntries(data));
+          document.getElementById('demo-note').hidden = false;
+        }
+        card.classList.add('done');
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch (err) {
+        formError.textContent = 'Something went wrong. Please check your connection and try again.';
+        btn.disabled = false;
+        btn.textContent = 'Get early access';
+      }
+    });
+  </script>
+</body>
+</html>
